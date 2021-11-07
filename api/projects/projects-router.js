@@ -10,7 +10,7 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const projects = await Project.get()
-    if(!projects) {
+    if (!projects) {
       res.status(200).json([])
     } else {
       res.status(200).json(projects)
@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
     const {id} = req.params
     const projectById = await Project.get(id)
 
-    if(!projectById) {
+    if (!projectById) {
       res.status(404).json({message: 'no project with given id'})
     } else {
       res.status(200).json(projectById)
@@ -38,6 +38,44 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+// [POST] /api/projects
+router.post('/', async (req, res) => {
+  const {name, description} = req.body
+  try {
+    if (!name || !description) {
+      res.status(400).json({message: 'You need a name and description!'})
+    } else {
+      const newProject = await Project.insert({name, description})
+      res.status(201).json(newProject)
+    }
+
+  } catch (err) {
+    res.status(500).json({message: 'Error with the request'})
+  }
+})
+
+// [PUT] /api.projects/:id
+router.put('/:id', async (req, res) => {
+  try {
+    const {id} = req.params
+    const {name, description} = req.body
+
+    if (!name || !description) {
+      res.status(400).json({message: 'Need a name and description!'})
+    } else {
+      const updatedProject = await Project.update(id, {name, description})
+
+      if (!updatedProject) {
+        res.status(404).json({message: 'User does not exist'})
+      } else {
+        res.status(200).json(updatedProject)
+      }
+    }
+
+  } catch (err) {
+    res.status(500).json({message: 'Error with the request'})
+  }
+})
 
 
 module.exports = router
