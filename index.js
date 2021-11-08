@@ -12,3 +12,14 @@ I need this code, but don't know where, perhaps should make some middleware, don
 
 Pull your server into this file and start it!
 */
+require('dotenv').config()
+const server = require('./api/server')
+const port = process.env.PORT || 5000
+
+server.get('/home', (req, res) => {
+  res.status(200).send(`<h1>We Are Connected! 🎈🎈🎈</h1>`)
+})
+
+server.listen(port, () => {
+  console.log(`\n*** Server is running on port: ${port} ***\n`)
+})
