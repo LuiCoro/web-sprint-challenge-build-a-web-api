@@ -24,7 +24,7 @@ router.get('/:id', async(req,  res) => {
     }
 
   } catch (err) {
-    res.status(500).json('Error trying to get action from server')
+    res.status(500).json({message: 'Error trying to get action from server'})
   }
 })
 
@@ -39,10 +39,46 @@ router.post('/', async(req, res) => {
       res.status(201).json(newAction)
     }
   } catch (err) {
-    res.status(500).json('Error trying to get action from server')
+    res.status(500).json({message: 'Error trying to get action from server'})
   }
 })
 
 // [PUT] /api/actions/:id
+router.put('/:id' , async (req, res) => {
+  try{
+    const {id} = req.params
+    const {project_id,description, notes} = req.body
+
+    if(!project_id || !description || !notes) {
+      res.status(400).json({message: 'Needs to have a project_id , description , and notes!'})
+    } else {
+      const UpdatedAction = await Actions.update(id, {project_id, description, notes})
+
+      if(!UpdatedAction) {
+        res.status(404).json({ message: 'The user ID does not exist'})
+      } else {
+        res.status(200).json(UpdatedAction)
+      }
+    }
+  } catch (err) {
+    res.status(500).json({message: 'Error trying to get action from server'})
+  }
+})
+
 // [DELETE] /api/actions/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    const {id} = req.params
+    const deleteAction = await Actions.remove(id)
+    if(!deleteAction) {
+      res.status(404).json({ message: 'The user ID does not exist'})
+    } else {
+      res.status(200).json()
+    }
+
+  } catch (err) {
+    res.status(500).json({message: 'Error trying to get action from server'})
+  }
+})
+
 module.exports = router
